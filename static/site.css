@@ -1,0 +1,30 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+h1{
+    text-align: center;
+}
+
+h3{
+    display: inline;
+}
+
+i{
+    text-align: right;
+}
+
+.wrapper{
+    width: 80%;
+    margin: 0 auto;
+}
+
+.note{
+    vertical-align: top;
+    display: inline-block;
+    width: 10em;
+    height: 10em;
+    background-color: yellow;
+    margin: .3em;
+}

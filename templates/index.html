@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Notes Application  | Coding Dojo Assignment</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}" type="text/css">
+        <script src="https://use.fontawesome.com/08744b06be.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                console.log('Doc Script Ready');
+
+                $('.noteDesc').click(viewToEdit);
+
+
+                function viewToEdit(){
+                    var desc = $(this).html();  //Save the existing note description
+                    var editDesc = $('<textarea class="noteDesc" />');  //Create a text area for the description
+                    editDesc.val(desc);  //Replace empty text area with the original content
+                    $(this).replaceWith(editDesc);  //Push textarea to the html
+                    var id = $(this).closest("div").prop("id");
+                    //$(this).replaceWith('form action="/notes/update/' + id + '" method="POST">' + editDesc +'<input type="submit" name="submit" value="Update Note"></form>');
+                    editDesc.focus();
+                };
+
+                $('.title').click(function(){
+
+                    var title = $(this).html();  //Save the existing note description
+                    var editTitle = $('<textarea class="title" />');  //Create a text area for the description
+                    editTitle.val(title);  //Replace empty text area with the original content
+                    $(this).replaceWith(editTitle);  //Push textarea to the html
+                    var id = $(this).closest("div").prop("id");
+                    //$(this).replaceWith('form action="/notes/update/' + id + '" method="POST">' + editDesc +'<input type="submit" name="submit" value="Update Note"></form>');
+                    editTitle.focus();
+                });
+
+                $('.note').on('change', 'textarea', function(){
+                    console.log($(this).val());
+                    console.log($(this).siblings('h3').text());
+                    $.ajax({
+                        method: 'post',
+                        url: '/notes/update/' + $(this).closest("div").prop("id"),
+                        data: {'title': $(this).siblings('h3').text(), 'description': $(this).val()},
+                        dataType: 'json',
+                        success: function(res){
+                             console.log(res.status);
+                        }
+                    });
+                });
+
+                function editToView(){
+                    var desc = $(this).val();
+                    var viewDesc = $('<p />');
+                    viewDesc.html(desc);
+                    $(this).replaceWith(viewDesc);
+                };
+
+                $('i').click(function(){
+                    var id = $('i').closest("div").prop("id"); //Grabs the id of the parent div for the note
+                    var form = $('<form action="/notes/delete/' + id + '" method="POST"></form>');  //Build a dynamic form to call the delete
+                    form.submit();
+                    return false;
+                })
+
+
+            })
+        </script>
+    </head>
+    <body>
+        <div class="wrapper">
+
+            <h1>Note Tracking Application</h1>
+
+            <form class="" action="/notes/add" method="post">
+                <input type="text" name="title" placeholder="Add New Note Title" value="">
+                <input type="submit" name="submit" value="Add New Note">
+            </form>
+
+            <div class="notes">
+                {% for note in notes %}
+                    <div id="{{ note['id']}}" class="note">
+                        <h3 class="title">{{ note['title'] }} </h3>
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                        <p class="noteDesc"> {{ note['description'] }}</p>
+                        <!-- <form class="" action="/notes/delete" method="post">
+                            <input type="hidden" name="id" value="{{ note['id'] }}">
+                            <input type="submit" name="submit" value="Delete Note">
+                        </form> -->
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </body>
+
+</html>
